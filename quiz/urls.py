@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from . import views
+from .views import QuestionListView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,5 +26,6 @@ urlpatterns = [
     path('last-authenticate-user/', views.last_authenticate_user, name='last_authenticate_user'),
     path('test-token/', views.test_token, name='test_token'),
     path('add_question/', views.add_question, name='add_question'),
+    path('questions/', QuestionListView.as_view(), name='question-list'),
 ]
 

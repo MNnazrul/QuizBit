@@ -13,9 +13,18 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class AnswerOptionSerializer(serializers.ModelSerializer):
+    is_correct = serializers.BooleanField(write_only=True)
     class Meta:
         model = AnswerOption
         fields = ['id', 'text', 'is_correct']
+        def to_representation(self, instance):
+            representation = super().to_representation(instance)
+            representation.pop('is_correct', None)  # Remove 'is_correct' from the response
+            return representation
+        # def to_representation(self, instance):
+        #     representation = super().to_representation(instance)
+        #     representation.pop('is_correct', None) 
+        #     return representation
 
 class QuestionSerializer(serializers.ModelSerializer):
     options = AnswerOptionSerializer(many=True)
