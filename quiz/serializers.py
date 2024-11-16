@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from .models import Question, AnswerOption
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta(object):
@@ -9,3 +10,24 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True},
         }
+
+
+class AnswerOptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AnswerOption
+        fields = ['id', 'text', 'is_correct']
+
+class QuestionSerializer(serializers.ModelSerializer):
+    options = AnswerOptionSerializer(many=True)
+
+    class Meta:
+        model = Question
+        fields = ['id', 'text', 'created_at', 'updated_at', 'options']
+
+    def create(self, validated_data):
+        options_data = validated_data.pop('options')
+        question = Question.objects.create(**validated_data)
+        for option_data in options_data:
+            AnswerOption.objects.create(question=question, **option_data)
+        
+        return question

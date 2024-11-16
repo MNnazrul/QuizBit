@@ -8,8 +8,10 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 
-from .serializers import UserSerializer
+from .serializers import UserSerializer, QuestionSerializer, AnswerOptionSerializer
+from .models import Question, AnswerOption
 
+# ============ User singup, login, token authentication, last authenticate user done =========
 last_authenticated_username = None
 @api_view(['POST'])
 def login(request):
@@ -29,11 +31,9 @@ def login(request):
         }, status=status.HTTP_200_OK)
 
 
-from datetime import datetime
 
 @api_view(['GET'])
 def last_authenticate_user(request):
-    print(datetime.now())
     global last_authenticated_username
     if not last_authenticated_username:
         return Response({
@@ -79,6 +79,45 @@ from rest_framework.permissions import IsAuthenticated
 def test_token(request):
     return Response({"Passed for {}".format(request.user.email)})
 
+# ======================== end_1 =========================================
 
 
+#============== add questoins, and view all question ================
 
+
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def add_question(request):
+    
+    question_data = request.data.get('question')
+    options_data = request.data.get('options')
+
+    if options_data is None:
+        return Response(
+            {'error': 'Options data is required.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if len(options_data) != 4:
+        return Response(
+            {'error': 'A question must have exactly 4 options.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    question = Question.objects.create(
+        text=question_data['text']
+    )
+
+    for option in options_data:
+        AnswerOption.objects.create(
+            question=question,
+            text=option['text'],
+            is_correct=option.get('is_correct', False)  
+        )
+    return Response({
+        'message': 'Question and options added successfully!',
+        'question': {
+            'text': question.text,
+            'options': options_data
+        }
+    }, status=status.HTTP_201_CREATED)

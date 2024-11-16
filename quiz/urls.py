@@ -24,5 +24,6 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('last-authenticate-user/', views.last_authenticate_user, name='last_authenticate_user'),
     path('test-token/', views.test_token, name='test_token'),
+    path('add_question/', views.add_question, name='add_question'),
 ]
 
