@@ -23,9 +23,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', views.login, name='login'),
     path('signup/', views.signup, name='signup'),
-    path('last-authenticate-user/', views.last_authenticate_user, name='last_authenticate_user'),
+    # path('last-authenticate-user/', views.last_authenticate_user, name='last_authenticate_user'),
     path('test-token/', views.test_token, name='test_token'),
-    path('add_question/', views.add_question, name='add_question'),
+    path('add-question/', views.add_question, name='add_question'),
     path('questions/', QuestionListView.as_view(), name='question-list'),
+    path('last-auth/', views.last_auth, name='last_auth')
 ]
 

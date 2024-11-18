@@ -12,10 +12,10 @@ from .serializers import UserSerializer, QuestionSerializer, AnswerOptionSeriali
 from .models import Question, AnswerOption
 
 # ============ User singup, login, token authentication, last authenticate user done =========
-last_authenticated_username = None
+# last_authenticated_username = None
 @api_view(['POST'])
 def login(request):
-    global last_authenticated_username
+    # global last_authenticated_username
     user = get_object_or_404(User, username=request.data['username'])
     if not user.check_password(request.data['password']):
         return Response({
@@ -23,8 +23,9 @@ def login(request):
             'status': 400,
         })
     serializer = UserSerializer(instance=user)
-    last_authenticated_username = user.username
+    # last_authenticated_username = user.username
     token, created = Token.objects.get_or_create(user=user)
+    # print(last_authenticated_username)
     return Response({
             'token': token.key,
             'user': serializer.data,
@@ -32,16 +33,16 @@ def login(request):
 
 
 
-@api_view(['GET'])
-def last_authenticate_user(request):
-    global last_authenticated_username
-    if not last_authenticated_username:
-        return Response({
-            'Message': 'Not username login',
-        })
-    return Response({
-        'User name': last_authenticated_username
-    })
+# @api_view(['GET'])
+# def last_authenticate_user(request):
+#     global last_authenticated_username
+#     if not last_authenticated_username:
+#         return Response({
+#             'Message': 'No authenticate user found',
+#         })
+#     return Response({
+#         'User name': last_authenticated_username
+#     })
 
 @api_view(['POST'])
 def signup(request):
@@ -68,16 +69,12 @@ def signup(request):
     )
 
 
-from rest_framework.decorators import authentication_classes, permission_classes
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
-
 def test_token(request):
-    return Response({"Passed for {}".format(request.user.email)})
+    request.session['last_authenticated_user'] = request.user.username
+    return Response({"Passed for {}".format(request.user.username)})
 
 # ======================== end_1 =========================================
 
@@ -128,3 +125,15 @@ def add_question(request):
 class QuestionListView(generics.ListAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
+    
+
+@api_view(['GET'])
+def last_auth(request):
+    last_user = request.session.get('last_authenticated_user', 'Unknown')
+    if not last_user:
+        return Response({
+            'message': 'No last authenticated user found'
+        })
+    return Response({
+        'message': f"last authenticate user {last_user}"
+    })
