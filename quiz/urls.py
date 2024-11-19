@@ -27,6 +27,8 @@ urlpatterns = [
     path('test-token/', views.test_token, name='test_token'),
     path('add-question/', views.add_question, name='add_question'),
     path('questions/', QuestionListView.as_view(), name='question-list'),
-    path('last-auth/', views.last_auth, name='last_auth')
+    path('last-auth/', views.last_auth, name='last_auth'),
+    path('submit-answer/', views.submit_answer, name='submit_answer'),
+    path('user-records/', views.user_records, name='user_records')
 ]
 

@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 
 from .serializers import UserSerializer, QuestionSerializer, AnswerOptionSerializer
-from .models import Question, AnswerOption
+from .models import *
 
 # ============ User singup, login, token authentication, last authenticate user done =========
 # last_authenticated_username = None
@@ -73,7 +73,6 @@ def signup(request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def test_token(request):
-    request.session['last_authenticated_user'] = request.user.username
     return Response({"Passed for {}".format(request.user.username)})
 
 # ======================== end_1 =========================================
@@ -127,13 +126,85 @@ class QuestionListView(generics.ListAPIView):
     serializer_class = QuestionSerializer
     
 
+# getting last authenticated user.
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication, SessionAuthentication])
+@permission_classes([IsAuthenticated])
 def last_auth(request):
-    last_user = request.session.get('last_authenticated_user', 'Unknown')
-    if not last_user:
-        return Response({
-            'message': 'No last authenticated user found'
-        })
     return Response({
-        'message': f"last authenticate user {last_user}"
+        'user': request.user.username
     })
+
+
+# submiting Answer
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication, SessionAuthentication])
+@permission_classes([IsAuthenticated])
+def submit_answer(request):
+    user = request.user
+    question_id = request.data.get('question_id')
+    option_id = request.data.get('option_id')
+    try:
+        question = Question.objects.get(id = question_id)
+        chosen_option = AnswerOption.objects.get(id = option_id, question=question)
+    except Question.DoesNotExist:
+        return Response({
+            "error": "Question not found",
+        }, status=404)
+    except AnswerOption.DoesNotExist:
+        return Response({
+            "error": "Invalid option",
+        }, status=400)
+    
+    is_correct = chosen_option.is_correct
+
+    submission = Submission.objects.create(
+        user = user,
+        question = question,
+        chosen_option = chosen_option,
+        is_correct = is_correct
+    )
+    return Response({
+        "question_id": submission.question.id,
+        "chosen_option": submission.chosen_option.id,
+        "is_correct": submission.is_correct,
+        "full_question": {
+            "question": question.text,
+            "options": [
+                {
+                    "id": option.id,
+                    "text": option.text,
+                    "is_correct": option.is_correct
+                } for option in question.options.all()
+            ]
+        }
+    }, status = 200)
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication, SessionAuthentication])
+@permission_classes([IsAuthenticated])
+def user_records(request):
+    user = request.user
+    submissions = Submission.objects.filter(user =user)
+    total_attempts = submissions.count()
+    correct_attemps = submissions.filter(is_correct = True).count()
+
+    records = [
+        {
+            "question_id": submission.question.id,
+            "chosen_option": submission.chosen_option.id,
+            "is_correct": submission.is_correct,
+            "submitted_at": submission.submission_time,
+        } for submission in submissions
+    ]
+
+    return Response({
+        "user": user.username,
+        "summary": {
+            "tota_attempts": total_attempts,
+            "correct_attempts": correct_attemps
+        }, 
+        "records": records,
+    }, status=200)
+
