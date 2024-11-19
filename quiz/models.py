@@ -25,7 +25,7 @@ class Submission(models.Model):
     is_correct = models.BooleanField()
     submission_time = models.DateTimeField(auto_now_add=True)
     
-    # def __str__(self):
-    #     return f"Submission by {self.user.username} for Question {self.question.id}"
+    def __str__(self):
+        return f"Submission by {self.user.username} for Question {self.question.id}"
     
     
