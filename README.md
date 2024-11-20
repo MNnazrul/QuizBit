@@ -12,7 +12,7 @@ pip install -r requirements.txt
 ```
 3. Go to the quizbit folder
 ```
-cd quizbit
+cd QuizBit
 ```
 4. Run the below command to start the project
 ```
