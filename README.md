@@ -49,7 +49,7 @@ erDiagram
     Question "1" -- "*" Submission : question
     AnswerOption "1" -- "*" Submission : answer_option
 ```
-![](image/DB_design.png)
+![](images/DBdesign.png)
 
 
 
