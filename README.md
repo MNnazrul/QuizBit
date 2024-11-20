@@ -52,15 +52,8 @@ erDiagram
     auth_user {
         int id PK
         varchar password
-        datetime last_login
-        boolean is_superuser
         varchar username
-        varchar first_name
-        varchar last_name
         varchar email
-        boolean is_staff
-        boolean is_active
-        datetime date_joined
     }
 
     Question {
