@@ -5,16 +5,40 @@
 ```
 git clone https://github.com/MNnazrul/QuizBit.git
 ```
-2. Install the required libraries
+2. Navigate to the QuizBit folder
+```
+cd QuizBit
+```
+3. Create virtual environment
+```
+python -m venv venv
+
+```
+
+4. activate virtual environment.
+
+    * On Windows:
+    ```
+    venv\Scripts\activate
+    ```
+    * On macOS/Linux:
+    ```
+    source venv/bin/activate
+    ```
+
+5. Install the required libraries
 Open a command line terminal in the cloned repository folder
 ```
 pip install -r requirements.txt
 ```
-3. Go to the quizbit folder
+
+6. Run database migrations
 ```
-cd QuizBit
+python manage.py migrate
+
 ```
-4. Run the below command to start the project
+
+7. Run the below command to start the project
 ```
 python manage.py runserver
 ```
