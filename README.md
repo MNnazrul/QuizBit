@@ -1,7 +1,7 @@
 # QuizBit
 
 ## API documentation 
-[](https://documenter.getpostman.com/view/27408193/2sAYBRGu7v)
+[postman documentation](https://documenter.getpostman.com/view/27408193/2sAYBRGu7v)
 
 ## Database Design
 Here, ER Diagram of the Database that I used here, 
