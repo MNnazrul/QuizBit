@@ -1,5 +1,21 @@
 # QuizBit
 
+## Installation Guide
+1. Clone the repository
+```
+git clone https://github.com/MNnazrul/QuizBit.git
+```
+2. Install the required libraries
+Open a command line terminal in the cloned repository folder
+```
+pip install -r requirements.txt
+```
+3. Go to the quizbit folder
+cd quizbit
+4. Run the below command to start the project
+```
+python manage.py runserver
+```
 ## API documentation 
 [postman documentation](https://documenter.getpostman.com/view/27408193/2sAYBRGu7v)
 
