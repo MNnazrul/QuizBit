@@ -11,7 +11,9 @@ Open a command line terminal in the cloned repository folder
 pip install -r requirements.txt
 ```
 3. Go to the quizbit folder
+```
 cd quizbit
+```
 4. Run the below command to start the project
 ```
 python manage.py runserver
