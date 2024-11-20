@@ -12,10 +12,8 @@ from .serializers import UserSerializer, QuestionSerializer, AnswerOptionSeriali
 from .models import *
 
 # ============ User singup, login, token authentication, last authenticate user done =========
-# last_authenticated_username = None
 @api_view(['POST'])
 def login(request):
-    # global last_authenticated_username
     user = get_object_or_404(User, username=request.data['username'])
     if not user.check_password(request.data['password']):
         return Response({
@@ -23,26 +21,11 @@ def login(request):
             'status': 400,
         })
     serializer = UserSerializer(instance=user)
-    # last_authenticated_username = user.username
     token, created = Token.objects.get_or_create(user=user)
-    # print(last_authenticated_username)
     return Response({
             'token': token.key,
             'user': serializer.data,
         }, status=status.HTTP_200_OK)
-
-
-
-# @api_view(['GET'])
-# def last_authenticate_user(request):
-#     global last_authenticated_username
-#     if not last_authenticated_username:
-#         return Response({
-#             'Message': 'No authenticate user found',
-#         })
-#     return Response({
-#         'User name': last_authenticated_username
-#     })
 
 @api_view(['POST'])
 def signup(request):
